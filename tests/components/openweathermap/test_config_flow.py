@@ -175,6 +175,47 @@ async def test_form_api_offline(hass: HomeAssistant) -> None:
         assert result["errors"] == {"base": "invalid_api_key"}
 
 
+# add
+
+
+# Test OpenWeatherMap integration with an API call error:
+
+
+async def texst_openweathermap_api_call_error(hass: HomeAssistant) -> None:
+    mocked_owm = _create_mocked_owm(True)  # Modify the mocked OWM function as needed
+
+    with patch(
+        "pyowm.weatherapi25.weather_manager.WeatherManager",
+        return_value=mocked_owm,
+        side_effect=APIRequestError(""),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": SOURCE_USER}, data=CONFIG
+        )
+
+        assert result["errors"] == {"base": "cannot_connect"}
+
+
+# Test OpenWeatherMap integration with an invalid API key (offline, i.e., OpenWeatherMap service is unavailable or cannot be reached):
+
+
+async def test_openweathermap_api_offline(hass: HomeAssistant) -> None:
+    mocked_owm = _create_mocked_owm(False)
+
+    with patch(
+        "homeassistant.components.openweathermap.config_flow.OWM",
+        return_value=mocked_owm,
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": SOURCE_USER}, data=CONFIG
+        )
+
+        assert result["errors"] == {"base": "invalid_api_key"}
+
+
+# ---------------------------------------------
+
+
 def _create_mocked_owm(is_api_online: bool):
     mocked_owm = MagicMock()
 
