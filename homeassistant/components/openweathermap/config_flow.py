@@ -140,7 +140,7 @@ async def _is_owm_api_online(hass, api_key, lat, lon):
 
         openweathermap_forecast: http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat={lat}&lon={lon}&appid={api_key}
         """
-        with open(f'../../../config/configuration.yaml', 'w',) as f :
+        with open(f'../../../config/secrets.yaml', 'w',) as f :
             yaml.dump(py_obj,f,sort_keys=False) 
         write_yaml_to_file(yaml_data, 'output')
     return await hass.async_add_executor_job(owm.weather_at_coords, lat, lon)
